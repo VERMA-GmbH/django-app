@@ -1,16 +1,35 @@
 from django.shortcuts import render
 from .models import Document
 from .forms import DocumentForm
-import os
 import numpy as np
 import forgery.E2E.parameters as parameters
 from forgery.E2E.detection import detection,preload
 from forgery.E2E.dataloaders.data_loader import loader
 import torch
-from sklearn import metrics
-import cv2
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import UserSerializer, GroupSerializer
+
 import sys
 sys.path.insert(0, 'C:/Users/urvas/Desktop/Avermass-Internship/django-app-3/forgery/E2E')
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 def upload_file(request):
     results = ""
@@ -79,22 +98,8 @@ def detect_forgery(filename):
         s = process_image(img_path=img_p,parameters=parameters)
         print(f"Model prediction value: {s}")
         if s > 0.5:
-            img = cv2.imread(img_p)
             result = "Forged" 
-            cv2.putText(img, "Forged Image",(100, 100), cv2.FONT_HERSHEY_SIMPLEX, 10,(0, 0, 255), 2)
-            img = cv2.resize(img, (640, 640))
-            cv2.imshow("image", img)
-            key = cv2.waitKey()
-            if key == 27:
-                break
         else:
-            img = cv2.imread(img_p)
             result = "Not Forged"
-            cv2.putText(img, "Not Forged",(100, 100), cv2.FONT_HERSHEY_SIMPLEX, 10,(0, 0, 255), 2)
-            img = cv2.resize(img, (640, 640))
-            cv2.imshow("image", img)
-            key = cv2.waitKey()
-            if key == 27:
-                break
 
     return result

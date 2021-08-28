@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-+tb$axx@*zk$&h*@q8ie9qos0+w+!v@8jm_t1@+*czb8ng((pn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['52.191.9.171']
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -128,3 +128,8 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
