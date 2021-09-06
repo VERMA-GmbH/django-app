@@ -8,10 +8,11 @@ from forgery.E2E.detection import detection,preload
 from forgery.E2E.dataloaders.data_loader import loader
 import torch
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework import permissions
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, DocumentSerializer
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 import sys
 sys.path.insert(0, 'C:/Users/urvas/Desktop/Avermass-Internship/django-app-3/forgery/E2E')
@@ -34,23 +35,28 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 class UPLOADFILE(APIView):
+    def post(self, request):
+        filename = request.data['docfile'].name
+        results = self.detect_forgery(filename)
+        return Response({'results': results}, status = status.HTTP_201_CREATED)
 
-    def upload_file(self, request):
-        results = ""
-        if request.method == 'POST':
-            form = DocumentForm(request.POST, request.FILES)
-            if form.is_valid():
-                newdoc = Document(docfile = request.FILES['docfile'])
-                newdoc.save()
-                filename = newdoc.docfile.name
-                results = self.detect_forgery(filename = filename)
-                # results['img_path_result'] = img_path_result
-                # results['label'] = 'Forged' if is_pair_found else 'Not Forged'
-        else:
-            form = DocumentForm()
-            return render(request, 'detectApp/upload_file.html', {'form': form})
+    # def upload_file(self, request):
+    #     results = ""
+    #     if request.method == 'POST':
+    #         form = DocumentForm(request.POST, request.FILES)
+    #         if form.is_valid():
+    #             newdoc = Document(docfile = request.FILES['docfile'])
+    #             newdoc.save()
+    #             filename = newdoc.docfile.name
+    #             results = self.detect_forgery(filename = filename)
+    #             # results['img_path_result'] = img_path_result
+    #             # results['label'] = 'Forged' if is_pair_found else 'Not Forged'
+    #     else:
+    #         form = DocumentForm()
+    #         # return render(request, 'detectApp/upload_file.html', {'form': form})
+    #         return Response()
 
-        return render(request, 'detectApp/upload_file.html', {'results': results})
+    #     return render(request, 'detectApp/upload_file.html', {'results': results})
 
     # Create your views here.
     def process_image(img_path, parameters):

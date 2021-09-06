@@ -7,7 +7,8 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
-    path('upload/', views.UPLOADFILE.as_view(), name = 'upload_file'),
-    path('', include(router.urls)),
+    # path('', views.upload_file, name='upload_file'),
+    path('', views.UPLOADFILE.as_view()),
+    # path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
