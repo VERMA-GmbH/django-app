@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.views import APIView
 from .models import Document
 from .forms import DocumentForm
 import numpy as np
@@ -10,6 +11,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
+from rest_framework.views import APIView
 
 import sys
 sys.path.insert(0, 'C:/Users/urvas/Desktop/Avermass-Internship/django-app-3/forgery/E2E')
@@ -30,6 +32,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class UPLOADFILE(APIView):
+    pass
 
 def upload_file(request):
     results = ""
